@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Crachás e Cartões</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 24px; display: flex; flex-wrap: wrap; gap: 24px; }
+    .card { width: 300px; padding: 20px; border: 1px solid #ccc; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; }
+    .card img { width: 150px; height: 150px; object-fit: cover; border-radius: 50%; margin-bottom: 15px; }
+    .card h3 { margin: 0; font-size: 1.5em; }
+    .card p { margin: 5px 0; font-size: 1em; color: #555; }
+    .card .email { font-size: 0.9em; color: #888; }
+  </style>
+</head>
+<body>
+  <div id="lista">
+    <p>Gerando crachás...</p>
+  </div>
+  <script>
+    // Substitua a URL abaixo pela URL da sua nova planilha
+    const API_URL = 'https://script.google.com/macros/s/AKfycbz7iR5j_BHsi3aSvPh-JhpdbRWTy8sPf4jtxzJULSg6UvKdHiHc04ljIkLXIh3inL_H/exec';
+
+    fetch(API_URL)
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('lista').innerHTML = '';
+
+        const ativos = data.filter(x => (x.Ativo || '').toLowerCase() === 'sim');
+        const el = document.getElementById('lista');
+        el.innerHTML = ativos.map(x => {
+          return `
+            <div class="card">
+              ${x.FotoURL ? `<img src="${x.FotoURL}" alt="${x.Nome}"/>` : ''}
+              <h3>${x.Nome || ''}</h3>
+              <p>${x.Cargo || ''}</p>
+              <p>${x.Empresa || ''}</p>
+              <p>${x.Setor || ''}</p>
+              <p class="email">${x.Email || ''}</p>
+              <p>${x.Telefone || ''}</p>
+            </div>
+          `;
+        }).join('');
+      })
+      .catch(err => {
+        console.error('Erro ao carregar dados:', err);
+        document.getElementById('lista').innerHTML = `<p>Ocorreu um erro ao carregar os dados.</p>`;
+      });
+  </script>
+</body>
+</html>
